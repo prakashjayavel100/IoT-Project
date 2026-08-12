@@ -1,0 +1,426 @@
+F..............F.                                                        [100%]
+================================== FAILURES ===================================
+_______________________ test_complete_analysis_pipeline _______________________
+
+name = 'app.analysis_service', package = None
+
+    def import_module(name, package=None):
+        """Import a module.
+    
+        The 'package' argument is required when performing a relative import. It
+        specifies the package to use as the anchor point from which to resolve the
+        relative import to an absolute import.
+    
+        """
+        level = 0
+        if name.startswith('.'):
+            if not package:
+                raise TypeError("the 'package' argument is required to perform a "
+                                f"relative import for {name!r}")
+            for character in name:
+                if character != '.':
+                    break
+                level += 1
+>       return _bootstrap._gcd_import(name[level:], package, level)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ModuleNotFoundError: No module named 'app.analysis_service'
+
+C:\Python314\Lib\importlib\__init__.py:88: ModuleNotFoundError
+
+The above exception was the direct cause of the following exception:
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001ECE04142B0>
+
+    @pytest.mark.asyncio
+    async def test_complete_analysis_pipeline(monkeypatch):
+        dummy_db = DummyDatabase()
+        dummy_notifications = DummyNotificationService()
+    
+>       monkeypatch.setattr("app.analysis_service.database", dummy_db)
+
+tests\test_analysis_and_dashboard.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\RHYTHAN S\AppData\Roaming\Python\Python314\site-packages\_pytest\monkeypatch.py:107: in derive_importpath
+    target = resolve(module)
+             ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+name = 'app.analysis_service'
+
+    def resolve(name: str) -> object:
+        # Simplified from zope.dottedname.
+        parts = name.split(".")
+    
+        used = parts.pop(0)
+        found: object = importlib.import_module(used)
+        for part in parts:
+            used += "." + part
+            try:
+                found = getattr(found, part)
+            except AttributeError:
+                pass
+            else:
+                continue
+            # We use explicit un-nesting of the handling block in order
+            # to avoid nested exceptions.
+            try:
+                importlib.import_module(used)
+            except ImportError as ex:
+                expected = str(ex).split()[-1]
+                if expected == used:
+                    raise
+                else:
+>                   raise ImportError(f"import error in {used}: {ex}") from ex
+E                   ImportError: import error in app.analysis_service: No module named 'app.analysis_service'
+
+C:\Users\RHYTHAN S\AppData\Roaming\Python\Python314\site-packages\_pytest\monkeypatch.py:88: ImportError
+_____________________ test_adwin_drift_detection_sequence _____________________
+
+    def test_adwin_drift_detection_sequence():
+        device_id = "drift-device"
+        # Use a stable baseline first; ADWIN should not trigger immediately.
+        for value in [100.0, 102.0, 99.0, 101.0, 100.5]:
+>           result = drift_service.detect_drift(device_id, {
+                "packet_rate": value,
+                "behavior_score": 80.0,
+                "network_score": 90.0,
+                "firmware_score": 95.0,
+            })
+
+tests\test_ml_services.py:46: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\drift_service.py:55: in detect_drift
+    drift_detected = state.update(value)
+                     ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <app.services.drift_service.DeviceDriftState object at 0x000001ECE04D5FD0>
+value = 365.0
+
+    def update(self, value: float) -> bool:
+        """Update the ADWIN detector with a new value and return whether drift is detected."""
+        self.detector.update(value)
+        self.initialized = True
+>       return self.detector.change_detected
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'ADWIN' object has no attribute 'change_detected'
+
+app\services\drift_service.py:17: AttributeError
+============================== warnings summary ===============================
+..\..\Users\RHYTHAN S\AppData\Roaming\Python\Python314\site-packages\fastapi\testclient.py:1
+  C:\Users\RHYTHAN S\AppData\Roaming\Python\Python314\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+app\config.py:9
+  c:\IOT_Project\backend\app\config.py:9: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'env'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    MONGODB_URI: SecretStr = Field("mongodb://localhost:27017", env="MONGODB_URI")
+
+app\config.py:12
+  c:\IOT_Project\backend\app\config.py:12: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'env'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    DATABASE_NAME: str = Field("iot_trust_db", env="DATABASE_NAME")
+
+app\config.py:15
+  c:\IOT_Project\backend\app\config.py:15: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'env'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    MQTT_BROKER: str = Field("localhost", env="MQTT_BROKER")
+
+app\config.py:16
+  c:\IOT_Project\backend\app\config.py:16: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'env'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    MQTT_PORT: int = Field(1883, env="MQTT_PORT")
+
+app\config.py:17
+  c:\IOT_Project\backend\app\config.py:17: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'env'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    MQTT_USERNAME: Optional[str] = Field(None, env="MQTT_USERNAME")
+
+app\config.py:18
+  c:\IOT_Project\backend\app\config.py:18: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'env'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    MQTT_PASSWORD: Optional[SecretStr] = Field(None, env="MQTT_PASSWORD")
+
+app\config.py:19
+  c:\IOT_Project\backend\app\config.py:19: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'env'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    MQTT_TOPIC: str = Field("iot/devices/data", env="MQTT_TOPIC")
+
+app\config.py:7
+  c:\IOT_Project\backend\app\config.py:7: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    class Settings(BaseSettings):
+
+app\schemas\device_schema.py:8
+  c:\IOT_Project\backend\app\schemas\device_schema.py:8: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    device_id: str = Field(..., description="Unique device identifier", example="device-123")
+
+app\schemas\device_schema.py:9
+  c:\IOT_Project\backend\app\schemas\device_schema.py:9: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    packet_rate: float = Field(..., example=12.5)
+
+app\schemas\device_schema.py:10
+  c:\IOT_Project\backend\app\schemas\device_schema.py:10: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    behavior_score: float = Field(..., example=84.0)
+
+app\schemas\device_schema.py:11
+  c:\IOT_Project\backend\app\schemas\device_schema.py:11: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    network_score: float = Field(..., example=73.2)
+
+app\schemas\device_schema.py:12
+  c:\IOT_Project\backend\app\schemas\device_schema.py:12: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    firmware_score: float = Field(..., example=96.7)
+
+app\schemas\device_schema.py:21
+  c:\IOT_Project\backend\app\schemas\device_schema.py:21: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    packet_rate: float = Field(..., ge=0, description="Packet rate must be 0 or greater", example=12.5)
+
+app\schemas\device_schema.py:22
+  c:\IOT_Project\backend\app\schemas\device_schema.py:22: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    behavior_score: float = Field(..., ge=0, le=100, description="Behavior score 0-100", example=84.0)
+
+app\schemas\device_schema.py:23
+  c:\IOT_Project\backend\app\schemas\device_schema.py:23: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    network_score: float = Field(..., ge=0, le=100, description="Network score 0-100", example=73.2)
+
+app\schemas\device_schema.py:24
+  c:\IOT_Project\backend\app\schemas\device_schema.py:24: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    firmware_score: float = Field(..., ge=0, le=100, description="Firmware score 0-100", example=96.7)
+
+app\schemas\device_schema.py:28
+  c:\IOT_Project\backend\app\schemas\device_schema.py:28: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    device_id: str = Field(..., description="Unique device identifier", example="device-123")
+
+app\schemas\device_schema.py:29
+  c:\IOT_Project\backend\app\schemas\device_schema.py:29: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    device_name: str = Field(..., description="Human-friendly name", example="Factory Gateway")
+
+app\schemas\device_schema.py:30
+  c:\IOT_Project\backend\app\schemas\device_schema.py:30: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    device_type: str = Field(..., description="Type/category of device", example="gateway")
+
+app\schemas\device_schema.py:38
+  c:\IOT_Project\backend\app\schemas\device_schema.py:38: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    success: bool = Field(..., example=True)
+
+app\schemas\device_schema.py:39
+  c:\IOT_Project\backend\app\schemas\device_schema.py:39: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    message: str = Field(..., example="Action completed successfully")
+
+app\schemas\device_schema.py:47
+  c:\IOT_Project\backend\app\schemas\device_schema.py:47: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    device_id: str = Field(..., example="device-123")
+
+app\schemas\device_schema.py:48
+  c:\IOT_Project\backend\app\schemas\device_schema.py:48: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    packet_rate: float = Field(..., example=12.5)
+
+app\schemas\device_schema.py:49
+  c:\IOT_Project\backend\app\schemas\device_schema.py:49: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    behavior_score: float = Field(..., example=84.0)
+
+app\schemas\device_schema.py:50
+  c:\IOT_Project\backend\app\schemas\device_schema.py:50: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    network_score: float = Field(..., example=73.2)
+
+app\schemas\device_schema.py:51
+  c:\IOT_Project\backend\app\schemas\device_schema.py:51: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    firmware_score: float = Field(..., example=96.7)
+
+app\schemas\device_schema.py:52
+  c:\IOT_Project\backend\app\schemas\device_schema.py:52: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    timestamp: datetime = Field(..., example="2025-01-01T12:00:00Z")
+
+app\schemas\device_schema.py:53
+  c:\IOT_Project\backend\app\schemas\device_schema.py:53: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    message: str = Field(..., example="Device data received and stored")
+
+app\schemas\device_schema.py:57
+  c:\IOT_Project\backend\app\schemas\device_schema.py:57: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    device_id: str = Field(..., example="device-123")
+
+app\schemas\device_schema.py:58
+  c:\IOT_Project\backend\app\schemas\device_schema.py:58: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    input_features: Dict[str, float] = Field(..., example={"packet_rate": 12.5, "behavior_score": 84.0, "network_score": 73.2, "firmware_score": 96.7})
+
+app\schemas\device_schema.py:59
+  c:\IOT_Project\backend\app\schemas\device_schema.py:59: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    anomaly_detected: bool = Field(..., example=False)
+
+app\schemas\device_schema.py:60
+  c:\IOT_Project\backend\app\schemas\device_schema.py:60: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    anomaly_score: float = Field(..., example=0.12)
+
+app\schemas\device_schema.py:61
+  c:\IOT_Project\backend\app\schemas\device_schema.py:61: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    drift_detected: bool = Field(..., example=False)
+
+app\schemas\device_schema.py:62
+  c:\IOT_Project\backend\app\schemas\device_schema.py:62: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    trust_score: float = Field(..., example=0.94)
+
+app\schemas\device_schema.py:63
+  c:\IOT_Project\backend\app\schemas\device_schema.py:63: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    status: str = Field(..., example="TRUSTED")
+
+app\schemas\device_schema.py:64
+  c:\IOT_Project\backend\app\schemas\device_schema.py:64: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    timestamp: datetime = Field(..., example="2025-01-01T12:00:00Z")
+
+app\schemas\device_schema.py:68
+  c:\IOT_Project\backend\app\schemas\device_schema.py:68: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    device_id: str = Field(..., example="device-123")
+
+app\schemas\device_schema.py:69
+  c:\IOT_Project\backend\app\schemas\device_schema.py:69: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    packet_rate: float = Field(..., example=12.5)
+
+app\schemas\device_schema.py:70
+  c:\IOT_Project\backend\app\schemas\device_schema.py:70: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    behavior_score: float = Field(..., example=84.0)
+
+app\schemas\device_schema.py:71
+  c:\IOT_Project\backend\app\schemas\device_schema.py:71: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    network_score: float = Field(..., example=73.2)
+
+app\schemas\device_schema.py:72
+  c:\IOT_Project\backend\app\schemas\device_schema.py:72: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    firmware_score: float = Field(..., example=96.7)
+
+app\schemas\device_schema.py:73
+  c:\IOT_Project\backend\app\schemas\device_schema.py:73: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    anomaly_detected: bool = Field(..., example=False)
+
+app\schemas\device_schema.py:74
+  c:\IOT_Project\backend\app\schemas\device_schema.py:74: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    anomaly_score: float = Field(..., example=0.12)
+
+app\schemas\device_schema.py:75
+  c:\IOT_Project\backend\app\schemas\device_schema.py:75: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    drift_detected: bool = Field(..., example=False)
+
+app\schemas\device_schema.py:76
+  c:\IOT_Project\backend\app\schemas\device_schema.py:76: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    trust_score: float = Field(..., example=0.94)
+
+app\schemas\device_schema.py:77
+  c:\IOT_Project\backend\app\schemas\device_schema.py:77: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    status: str = Field(..., example="TRUSTED")
+
+app\schemas\device_schema.py:78
+  c:\IOT_Project\backend\app\schemas\device_schema.py:78: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    timestamp: datetime = Field(..., example="2025-01-01T12:00:00Z")
+
+app\schemas\device_schema.py:82
+  c:\IOT_Project\backend\app\schemas\device_schema.py:82: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    device_id: str = Field(..., example="device-123")
+
+app\schemas\device_schema.py:83
+  c:\IOT_Project\backend\app\schemas\device_schema.py:83: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    event_type: str = Field(..., example="ANOMALY")
+
+app\schemas\device_schema.py:84
+  c:\IOT_Project\backend\app\schemas\device_schema.py:84: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    description: str = Field(..., example="An anomaly was detected for this device.")
+
+app\schemas\device_schema.py:85
+  c:\IOT_Project\backend\app\schemas\device_schema.py:85: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    timestamp: datetime = Field(..., example="2025-01-01T12:00:00Z")
+
+app\schemas\device_schema.py:89
+  c:\IOT_Project\backend\app\schemas\device_schema.py:89: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    total_devices: int = Field(..., example=12)
+
+app\schemas\device_schema.py:90
+  c:\IOT_Project\backend\app\schemas\device_schema.py:90: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    trusted_devices: int = Field(..., example=10)
+
+app\schemas\device_schema.py:91
+  c:\IOT_Project\backend\app\schemas\device_schema.py:91: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    anomaly_devices: int = Field(..., example=1)
+
+app\schemas\device_schema.py:92
+  c:\IOT_Project\backend\app\schemas\device_schema.py:92: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    drift_devices: int = Field(..., example=1)
+
+app\schemas\device_schema.py:93
+  c:\IOT_Project\backend\app\schemas\device_schema.py:93: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    total_analysis_today: int = Field(..., example=4)
+
+app\schemas\device_schema.py:94
+  c:\IOT_Project\backend\app\schemas\device_schema.py:94: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    critical_devices: int = Field(..., example=1)
+
+app\schemas\device_schema.py:98
+  c:\IOT_Project\backend\app\schemas\device_schema.py:98: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    device_id: str = Field(..., example="device-123")
+
+app\schemas\device_schema.py:99
+  c:\IOT_Project\backend\app\schemas\device_schema.py:99: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    device_name: str = Field(..., example="Factory Gateway")
+
+app\schemas\device_schema.py:100
+  c:\IOT_Project\backend\app\schemas\device_schema.py:100: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    device_type: str = Field(..., example="gateway")
+
+app\schemas\device_schema.py:101
+  c:\IOT_Project\backend\app\schemas\device_schema.py:101: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    latest_trust_score: Optional[float] = Field(None, example=0.94)
+
+app\schemas\device_schema.py:102
+  c:\IOT_Project\backend\app\schemas\device_schema.py:102: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    latest_status: Optional[str] = Field(None, example="TRUSTED")
+
+app\schemas\device_schema.py:103
+  c:\IOT_Project\backend\app\schemas\device_schema.py:103: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    latest_anomaly_result: Optional[bool] = Field(None, example=False)
+
+app\schemas\device_schema.py:104
+  c:\IOT_Project\backend\app\schemas\device_schema.py:104: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    latest_drift_result: Optional[bool] = Field(None, example=False)
+
+app\schemas\device_schema.py:105
+  c:\IOT_Project\backend\app\schemas\device_schema.py:105: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    latest_timestamp: Optional[datetime] = Field(None, example="2025-01-01T12:00:00Z")
+
+app\schemas\device_schema.py:109
+  c:\IOT_Project\backend\app\schemas\device_schema.py:109: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    status: str = Field(..., example="ok")
+
+app\schemas\device_schema.py:113
+  c:\IOT_Project\backend\app\schemas\device_schema.py:113: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    database: str = Field(..., example="ok")
+
+app\schemas\device_schema.py:117
+  c:\IOT_Project\backend\app\schemas\device_schema.py:117: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    message: str = Field(..., example="IoT Trust Drift Detection Backend")
+
+app\schemas\device_schema.py:121
+  c:\IOT_Project\backend\app\schemas\device_schema.py:121: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'example'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/
+    analysis: str = Field(..., example="not-implemented")
+
+app\main.py:82
+  c:\IOT_Project\backend\app\main.py:82: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+..\..\Users\RHYTHAN S\AppData\Roaming\Python\Python314\site-packages\fastapi\applications.py:4675
+..\..\Users\RHYTHAN S\AppData\Roaming\Python\Python314\site-packages\fastapi\applications.py:4675
+  C:\Users\RHYTHAN S\AppData\Roaming\Python\Python314\site-packages\fastapi\applications.py:4675: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+app\main.py:93
+  c:\IOT_Project\backend\app\main.py:93: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("shutdown")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_analysis_and_dashboard.py::test_complete_analysis_pipeline
+FAILED tests/test_ml_services.py::test_adwin_drift_detection_sequence - Attri...
+2 failed, 15 passed, 75 warnings in 2.71s

@@ -1,0 +1,18 @@
+## Core web framework and ASGI server
+fastapi
+uvicorn[standard]
+
+## Settings and env
+python-dotenv
+pydantic
+pydantic-settings
+
+## Database
+motor
+
+## MQTT
+paho-mqtt
+
+## Machine learning (for later implementation)
+scikit-learn
+river
