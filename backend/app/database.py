@@ -46,7 +46,7 @@ async def connect_db():
 async def close_db():
     """Close the Motor client connection."""
     global client, db
-    if client:
+    if client is not None:
         client.close()
         client = None
     db = None

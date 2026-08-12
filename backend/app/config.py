@@ -1,4 +1,5 @@
-from typing import Optional
+from pathlib import Path
+from typing import ClassVar, Optional
 from urllib.parse import quote_plus
 
 from pydantic import Field, SecretStr
@@ -28,7 +29,8 @@ def _sanitize_mongodb_uri(uri: str) -> str:
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)
+    project_root: ClassVar[Path] = Path(__file__).resolve().parent.parent
+    model_config = SettingsConfigDict(env_file=project_root / ".env", case_sensitive=True)
 
     # MongoDB connection URI (Atlas or local). Do NOT hardcode credentials.
     MONGODB_URI: SecretStr = Field(default_factory=lambda: SecretStr("mongodb://localhost:27017"))
