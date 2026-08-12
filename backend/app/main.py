@@ -18,7 +18,17 @@ app = FastAPI(
     description="Backend API for an IoT trust, anomaly, and drift detection system.",
     version="1.0.0",
 )
+app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://iot-project-bdsg.onrender.com",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[],

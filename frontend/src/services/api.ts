@@ -1,4 +1,13 @@
 import axios from 'axios'
+
+// const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8003'
+
+// const api = axios.create({
+//   baseURL: API_BASE_URL,
+//   headers: { 'Content-Type': 'application/json' },
+//   timeout: 10000,
+// })
+
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   'https://iot-trust-backend.onrender.com'
@@ -12,7 +21,6 @@ const api = axios.create({
   },
   timeout: 10000,
 })
-
 export interface DeviceRegisterPayload {
   device_id: string
   device_name: string
