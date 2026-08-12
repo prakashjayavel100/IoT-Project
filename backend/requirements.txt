@@ -16,3 +16,4 @@ paho-mqtt
 ## Machine learning (for later implementation)
 scikit-learn
 river
+certifi
